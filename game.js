@@ -1,268 +1,382 @@
-// Game state
+// Game State
 const gameState = {
-    dna: 100,
-    totalInfected: 0,
-    totalDead: 0,
-    totalPopulation: 7800000000,
-    gameTime: 0,
-    gameOver: false,
-    winCondition: false,
+    currentScreen: 'mainMenu',
+    disease: {
+        type: 'bacteria',
+        name: 'ВЛВШ',
+        origin: 'china',
+        startDate: new Date(2026, 1, 19),
+        infectivity: 20,
+        severity: 10,
+        lethality: 5,
+        dna: 0
+    },
     countries: {
-        china: { population: 1400000000, infected: 0, dead: 0, name: 'Китай' },
-        india: { population: 1300000000, infected: 0, dead: 0, name: 'Индия' },
-        usa: { population: 331000000, infected: 0, dead: 0, name: 'США' },
-        europe: { population: 747000000, infected: 0, dead: 0, name: 'Европа' },
-        africa: { population: 1200000000, infected: 0, dead: 0, name: 'Африка' }
+        china: { name: 'Китай', population: 1400000000, infected: 1000, dead: 0, color: '#ff6b6b' },
+        india: { name: 'Индия', population: 1300000000, infected: 0, dead: 0, color: '#ff8e8e' },
+        usa: { name: 'США', population: 331000000, infected: 0, dead: 0, color: '#ffaaaa' },
+        russia: { name: 'Россия', population: 146000000, infected: 0, dead: 0, color: '#ffbbbb' },
+        brazil: { name: 'Бразилия', population: 213000000, infected: 0, dead: 0, color: '#ffcccc' },
+        australia: { name: 'Австралия', population: 25700000, infected: 0, dead: 0, color: '#ffdddd' },
+        japan: { name: 'Япония', population: 125000000, infected: 0, dead: 0, color: '#ffeeee' },
+        uk: { name: 'Великобритания', population: 67000000, infected: 0, dead: 0, color: '#ffd1d1' },
+        egypt: { name: 'Египет', population: 104000000, infected: 0, dead: 0, color: '#ffb6b6' },
+        sa: { name: 'ЮАР', population: 60000000, infected: 0, dead: 0, color: '#ff9f9f' }
+    },
+    world: {
+        totalPopulation: 7800000000,
+        totalInfected: 1000,
+        totalDead: 0,
+        cureProgress: 0
     },
     upgrades: {
-        transmission: [
-            { id: 'air', name: 'Воздушно-капельный', desc: 'Распространение по воздуху', cost: 25, purchased: false, effect: 0.3, requirement: null },
-            { id: 'water', name: 'Водный путь', desc: 'Заражение через воду', cost: 30, purchased: false, effect: 0.25, requirement: null },
-            { id: 'animal', name: 'Животный перенос', desc: 'Перенос животными', cost: 40, purchased: false, effect: 0.35, requirement: null },
-            { id: 'blood', name: 'Кровяной путь', desc: 'Передача через кровь', cost: 50, purchased: false, effect: 0.4, requirement: 'air' }
-        ],
-        symptoms: [
-            { id: 'cough', name: 'Кашель', desc: 'Увеличивает заразность', cost: 20, purchased: false, effect: 0.2, lethality: 0.05, requirement: null },
-            { id: 'fever', name: 'Лихорадка', desc: 'Повышает смертность', cost: 30, purchased: false, effect: 0.15, lethality: 0.1, requirement: null },
-            { id: 'rash', name: 'Сыпь', desc: 'Умеренные симптомы', cost: 25, purchased: false, effect: 0.1, lethality: 0.08, requirement: 'cough' },
-            { id: 'necrosis', name: 'Некроз', desc: 'Высокая смертность', cost: 60, purchased: false, effect: 0.25, lethality: 0.3, requirement: 'fever' }
-        ],
-        abilities: [
-            { id: 'resist_heat', name: 'Термоустойчивость', desc: 'Выживает в жаре', cost: 35, purchased: false, effect: 0.2, requirement: null },
-            { id: 'resist_cold', name: 'Хладоустойчивость', desc: 'Выживает в холоде', cost: 35, purchased: false, effect: 0.2, requirement: null },
-            { id: 'drug_resist', name: 'Лекарств. устойчивость', desc: 'Сопротивление лечению', cost: 70, purchased: false, effect: 0.4, requirement: 'resist_heat' },
-            { id: 'genetic_shift', name: 'Генетический сдвиг', desc: 'Мутация болезни', cost: 100, purchased: false, effect: 0.5, requirement: 'drug_resist' }
-        ]
+        air: { purchased: false, cost: 25, effect: 0.2 },
+        water: { purchased: false, cost: 30, effect: 0.15 },
+        blood: { purchased: false, cost: 50, effect: 0.25 },
+        cough: { purchased: false, cost: 20, effect: 0.1, lethality: 0.05 },
+        fever: { purchased: false, cost: 30, effect: 0.15, lethality: 0.1 },
+        necrosis: { purchased: false, cost: 60, effect: 0.2, lethality: 0.3 },
+        resistHeat: { purchased: false, cost: 35, effect: 0.15 },
+        resistCold: { purchased: false, cost: 35, effect: 0.15 },
+        drugResist: { purchased: false, cost: 70, effect: 0.3 }
     },
-    gameLog: []
+    news: ['19.02.2026 - Первые случаи заражения в Китае'],
+    gameTime: 0,
+    selectedCountry: 'china',
+    gameRunning: false
 };
-
-// DOM elements
-const dnaCounter = document.getElementById('dna-counter');
-const infectedCounter = document.getElementById('infected-counter');
-const deadCounter = document.getElementById('dead-counter');
-const healthyCounter = document.getElementById('healthy-counter');
-const logMessages = document.getElementById('log-messages');
 
 // Initialize game
 function initGame() {
-    // Start with infection in China
-    gameState.countries.china.infected = 1000;
-    gameState.totalInfected = 1000;
-    updateStats();
-    renderUpgrades();
-    addLogMessage('🦠 Инфекция началась в Китае!');
+    updateAllDisplays();
+    startGameLoop();
+}
+
+// Show different screens
+function showScreen(screenId) {
+    // Hide all screens
+    document.querySelectorAll('.menu-screen, .game-screen').forEach(screen => {
+        screen.classList.add('hidden');
+    });
+    
+    // Show selected screen
+    document.getElementById(screenId).classList.remove('hidden');
+    gameState.currentScreen = screenId;
+}
+
+// Select disease type
+function selectDisease(type) {
+    gameState.disease.type = type;
+    showScreen('difficultySelect');
+}
+
+// Select difficulty
+function selectDifficulty(difficulty) {
+    // Apply difficulty modifiers
+    switch(difficulty) {
+        case 'easy':
+            // Easy mode - slower cure, slower research
+            break;
+        case 'medium':
+            // Medium mode - normal
+            break;
+        case 'hard':
+            // Hard mode - faster cure, faster research
+            gameState.world.cureProgress = 5;
+            break;
+    }
+    showScreen('nameDisease');
+}
+
+// Start game
+function startGame() {
+    const diseaseName = document.getElementById('diseaseName').value;
+    if (diseaseName) {
+        gameState.disease.name = diseaseName;
+    }
+    
+    // Initialize game state
+    gameState.gameRunning = true;
+    gameState.gameTime = 0;
+    gameState.disease.dna = 50; // Starting DNA
+    
+    // Start with infection in origin country
+    const origin = gameState.disease.origin;
+    gameState.countries[origin].infected = 1000;
+    gameState.world.totalInfected = 1000;
+    
+    // Update displays
+    document.getElementById('diseaseNameDisplay').textContent = gameState.disease.name;
+    
+    // Show game screen
+    showScreen('gameScreen');
     
     // Start game loop
-    setInterval(gameLoop, 1000);
+    startGameLoop();
 }
 
 // Game loop
-function gameLoop() {
-    if (gameState.gameOver || gameState.winCondition) return;
-    
-    gameState.gameTime++;
-    
-    // Spread infection
-    spreadInfection();
-    
-    // Calculate deaths
-    calculateDeaths();
-    
-    // Generate DNA
-    generateDNA();
-    
-    // Check win/lose conditions
-    checkGameConditions();
-    
-    // Update UI
-    updateStats();
-    updateCountryDisplays();
+function startGameLoop() {
+    setInterval(() => {
+        if (!gameState.gameRunning) return;
+        
+        gameState.gameTime++;
+        
+        // Spread infection
+        spreadInfection();
+        
+        // Generate DNA
+        generateDNA();
+        
+        // Update cure progress
+        updateCure();
+        
+        // Check events
+        checkEvents();
+        
+        // Update displays
+        updateAllDisplays();
+    }, 1000);
 }
 
-// Spread infection between countries
+// Spread infection
 function spreadInfection() {
     const countries = Object.keys(gameState.countries);
-    const transmissionRate = calculateTransmissionRate();
+    const infectivity = gameState.disease.infectivity / 100;
     
     for (let country of countries) {
         const data = gameState.countries[country];
         if (data.infected > 0) {
             // Spread within country
-            const newInfections = Math.floor(data.infected * 0.1 * transmissionRate);
-            const availablePop = data.population - data.infected - data.dead;
-            data.infected = Math.min(data.infected + newInfections, availablePop);
+            const newInfections = Math.floor(data.infected * 0.1 * infectivity);
+            const available = data.population - data.infected - data.dead;
+            data.infected = Math.min(data.infected + newInfections, available);
             
-            // Spread to other countries
-            for (let target of countries) {
-                if (target !== country && Math.random() < 0.01 * transmissionRate) {
+            // Calculate deaths
+            const lethality = gameState.disease.lethality / 100;
+            const newDeaths = Math.floor(data.infected * lethality * 0.05);
+            data.dead = Math.min(data.dead + newDeaths, data.population);
+            data.infected = Math.max(data.infected - newDeaths, 0);
+            
+            // Spread to random countries
+            if (Math.random() < 0.01 * infectivity) {
+                const target = countries[Math.floor(Math.random() * countries.length)];
+                if (target !== country) {
                     const targetData = gameState.countries[target];
                     if (targetData.infected < targetData.population - targetData.dead) {
                         const spreadAmount = Math.floor(data.infected * 0.001);
-                        targetData.infected = Math.min(targetData.infected + spreadAmount, targetData.population - targetData.dead);
-                        addLogMessage(`✈️ Инфекция распространилась в ${targetData.name}`);
+                        targetData.infected = Math.min(targetData.infected + spreadAmount, 
+                                                       targetData.population - targetData.dead);
+                        addNews(`${formatDate()} - ${gameState.disease.name} обнаружен в ${targetData.name}`);
                     }
                 }
             }
         }
     }
     
-    // Update total infected
-    gameState.totalInfected = Object.values(gameState.countries).reduce((sum, c) => sum + c.infected, 0);
+    // Update totals
+    gameState.world.totalInfected = Object.values(gameState.countries).reduce((sum, c) => sum + c.infected, 0);
+    gameState.world.totalDead = Object.values(gameState.countries).reduce((sum, c) => sum + c.dead, 0);
 }
 
-// Calculate deaths based on symptoms
-function calculateDeaths() {
-    const lethality = calculateLethality();
-    
-    for (let country in gameState.countries) {
-        const data = gameState.countries[country];
-        if (data.infected > 0) {
-            const newDeaths = Math.floor(data.infected * lethality * 0.05);
-            data.dead = Math.min(data.dead + newDeaths, data.population);
-            data.infected = Math.max(data.infected - newDeaths, 0);
-        }
-    }
-    
-    gameState.totalDead = Object.values(gameState.countries).reduce((sum, c) => sum + c.dead, 0);
-}
-
-// Generate DNA based on infected population
+// Generate DNA
 function generateDNA() {
-    const dnaGain = Math.floor(gameState.totalInfected / 1000000) + 1;
-    gameState.dna += dnaGain;
+    const dnaGain = Math.floor(gameState.world.totalInfected / 100000) + 1;
+    gameState.disease.dna += dnaGain;
 }
 
-// Calculate transmission rate based on upgrades
-function calculateTransmissionRate() {
-    let rate = 1.0;
+// Update cure progress
+function updateCure() {
+    // Cure progresses based on world awareness and deaths
+    const deathRate = gameState.world.totalDead / gameState.world.totalPopulation;
+    const infectionRate = gameState.world.totalInfected / gameState.world.totalPopulation;
     
-    for (let upgrade of gameState.upgrades.transmission) {
-        if (upgrade.purchased) rate += upgrade.effect;
-    }
-    for (let upgrade of gameState.upgrades.symptoms) {
-        if (upgrade.purchased) rate += upgrade.effect;
-    }
-    for (let upgrade of gameState.upgrades.abilities) {
-        if (upgrade.purchased) rate += upgrade.effect * 0.5;
-    }
-    
-    return rate;
+    gameState.world.cureProgress += (infectionRate * 0.1 + deathRate * 0.2);
+    gameState.world.cureProgress = Math.min(gameState.world.cureProgress, 100);
 }
 
-// Calculate lethality based on symptoms
-function calculateLethality() {
-    let lethality = 0.01;
-    
-    for (let upgrade of gameState.upgrades.symptoms) {
-        if (upgrade.purchased && upgrade.lethality) {
-            lethality += upgrade.lethality;
-        }
+// Check for random events
+function checkEvents() {
+    if (Math.random() < 0.001) { // Rare events
+        const events = [
+            'ВОЗ объявляет чрезвычайную ситуацию',
+            'Ученые нашли возможную вакцину',
+            'Паника в аэропортах мира',
+            'Страны закрывают границы'
+        ];
+        const event = events[Math.floor(Math.random() * events.length)];
+        addNews(`${formatDate()} - ${event}`);
     }
-    
-    return Math.min(lethality, 0.95);
 }
 
 // Purchase upgrade
-function purchaseUpgrade(category, index) {
-    if (gameState.gameOver || gameState.winCondition) return;
-    
-    const upgrade = gameState.upgrades[category][index];
-    
-    // Check if already purchased
-    if (upgrade.purchased) return;
-    
-    // Check requirement
-    if (upgrade.requirement) {
-        const required = gameState.upgrades[category].find(u => u.id === upgrade.requirement);
-        if (!required || !required.purchased) {
-            addLogMessage(`❌ Требуется: ${required.name}`);
-            return;
-        }
-    }
-    
-    // Check DNA
-    if (gameState.dna < upgrade.cost) return;
+function purchaseUpgrade(upgradeId) {
+    const upgrade = gameState.upgrades[upgradeId];
+    if (!upgrade || upgrade.purchased) return;
+    if (gameState.disease.dna < upgrade.cost) return;
     
     // Purchase
-    gameState.dna -= upgrade.cost;
+    gameState.disease.dna -= upgrade.cost;
     upgrade.purchased = true;
     
-    addLogMessage(`✅ Куплено: ${upgrade.name}`);
-    
-    // Special effects for genetic shift
-    if (upgrade.id === 'genetic_shift') {
-        gameState.dna += 200;
-        addLogMessage('🧬 Генетический сдвиг! Получено +200 ДНК');
+    // Apply effects
+    if (upgrade.effect) {
+        gameState.disease.infectivity += upgrade.effect * 10;
+    }
+    if (upgrade.lethality) {
+        gameState.disease.lethality += upgrade.lethality * 10;
+        gameState.disease.severity += upgrade.lethality * 10;
     }
     
-    updateStats();
-    renderUpgrades();
-}
-
-// Render upgrade buttons
-function renderUpgrades() {
-    renderCategory('transmission', 'transmission-upgrades');
-    renderCategory('symptoms', 'symptoms-upgrades');
-    renderCategory('abilities', 'abilities-upgrades');
-}
-
-function renderCategory(category, elementId) {
-    const container = document.getElementById(elementId);
-    container.innerHTML = '';
+    // Add news
+    addNews(`${formatDate()} - Болезнь эволюционировала: ${getUpgradeName(upgradeId)}`);
     
-    gameState.upgrades[category].forEach((upgrade, index) => {
-        const div = document.createElement('div');
-        div.className = `upgrade-item ${upgrade.purchased ? 'purchased' : ''}`;
-        
-        // Check if requirement is met
-        if (!upgrade.purchased && upgrade.requirement) {
-            const required = gameState.upgrades[category].find(u => u.id === upgrade.requirement);
-            if (!required || !required.purchased) {
-                div.classList.add('locked');
+    // Update displays
+    updateAllDisplays();
+}
+
+// Get upgrade name
+function getUpgradeName(id) {
+    const names = {
+        air: 'Воздушно-капельный путь',
+        water: 'Водный путь',
+        blood: 'Кровяной путь',
+        cough: 'Кашель',
+        fever: 'Лихорадка',
+        necrosis: 'Некроз',
+        resistHeat: 'Термоустойчивость',
+        resistCold: 'Хладоустойчивость',
+        drugResist: 'Лекарственная устойчивость'
+    };
+    return names[id] || id;
+}
+
+// Select country on map
+function selectCountry(countryId) {
+    gameState.selectedCountry = countryId;
+    updateCountryInfo();
+    
+    // Highlight selected country
+    document.querySelectorAll('.country').forEach(c => {
+        c.classList.remove('selected');
+    });
+    document.getElementById(`country-${countryId}`).classList.add('selected');
+}
+
+// Update country info display
+function updateCountryInfo() {
+    const country = gameState.countries[gameState.selectedCountry];
+    if (!country) return;
+    
+    document.getElementById('selectedCountryName').textContent = country.name;
+    document.getElementById('countryPopulation').textContent = formatNumber(country.population);
+    document.getElementById('countryInfected').textContent = formatNumber(country.infected);
+    document.getElementById('countryDead').textContent = formatNumber(country.dead);
+    
+    const infectionRate = (country.infected + country.dead) / country.population * 100;
+    document.getElementById('countryInfectionProgress').style.width = infectionRate + '%';
+}
+
+// Show game tab (world/disease/news/cure)
+function showGameTab(tab) {
+    // Update tab buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Show selected tab
+    document.querySelectorAll('.panel-tab').forEach(tabEl => {
+        tabEl.classList.add('hidden');
+    });
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+}
+
+// Show evolution tree tab
+function showTreeTab(tab) {
+    // Update tree tabs
+    document.querySelectorAll('.tree-tab').forEach(t => {
+        t.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Show selected tree content
+    document.querySelectorAll('.tree-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    document.getElementById(`tree-${tab}`).classList.remove('hidden');
+}
+
+// Add news item
+function addNews(message) {
+    gameState.news.unshift(message);
+    if (gameState.news.length > 20) {
+        gameState.news.pop();
+    }
+    updateNewsFeed();
+}
+
+// Update all displays
+function updateAllDisplays() {
+    // Top bar stats
+    document.getElementById('infectedTotal').textContent = formatNumber(gameState.world.totalInfected);
+    document.getElementById('deadTotal').textContent = formatNumber(gameState.world.totalDead);
+    document.getElementById('dnaAmount').textContent = gameState.disease.dna;
+    
+    // World stats
+    const healthy = gameState.world.totalPopulation - gameState.world.totalInfected - gameState.world.totalDead;
+    document.getElementById('healthyWorld').textContent = formatNumber(healthy);
+    document.getElementById('infectedWorld').textContent = formatNumber(gameState.world.totalInfected);
+    document.getElementById('deadWorld').textContent = formatNumber(gameState.world.totalDead);
+    
+    // Cure progress
+    document.getElementById('cureProgress').style.width = gameState.world.cureProgress + '%';
+    document.getElementById('cureProgressDetail').style.width = gameState.world.cureProgress + '%';
+    document.getElementById('curePercent').textContent = Math.floor(gameState.world.cureProgress) + '%';
+    
+    // Disease stats
+    document.getElementById('infectivityBar').style.width = gameState.disease.infectivity + '%';
+    document.getElementById('severityBar').style.width = gameState.disease.severity + '%';
+    document.getElementById('lethalityBar').style.width = gameState.disease.lethality + '%';
+    
+    // Update country map colors
+    updateMapColors();
+    
+    // Update selected country info
+    updateCountryInfo();
+}
+
+// Update map colors based on infection
+function updateMapColors() {
+    for (let countryId in gameState.countries) {
+        const country = gameState.countries[countryId];
+        const element = document.getElementById(`country-${countryId}`);
+        if (element) {
+            const infectionRate = (country.infected + country.dead) / country.population;
+            if (infectionRate > 0.5) {
+                element.classList.add('infected');
+            } else {
+                element.classList.remove('infected');
             }
         }
-        
-        div.onclick = () => purchaseUpgrade(category, index);
-        
-        div.innerHTML = `
-            <span class="upgrade-name">${upgrade.name}</span>
-            <span class="upgrade-desc">${upgrade.desc}</span>
-            <span class="upgrade-cost">🧬 ${upgrade.cost} ДНК</span>
-            ${upgrade.lethality ? `<span class="upgrade-effect">💀 +${Math.floor(upgrade.lethality * 100)}% смертность</span>` : ''}
-            ${upgrade.effect ? `<span class="upgrade-effect">📈 +${Math.floor(upgrade.effect * 100)}% распространение</span>` : ''}
-        `;
-        
-        container.appendChild(div);
-    });
-}
-
-// Update country displays
-function updateCountryDisplays() {
-    for (let country in gameState.countries) {
-        const data = gameState.countries[country];
-        const infectedElement = document.getElementById(`${country}-infected`);
-        const progressElement = document.getElementById(`${country}-progress`);
-        
-        if (infectedElement) {
-            infectedElement.textContent = formatNumber(data.infected);
-        }
-        
-        if (progressElement) {
-            const infectionRate = (data.infected + data.dead) / data.population * 100;
-            progressElement.style.width = `${Math.min(infectionRate, 100)}%`;
-        }
     }
 }
 
-// Update global stats
-function updateStats() {
-    const totalHealthy = gameState.totalPopulation - gameState.totalInfected - gameState.totalDead;
-    
-    dnaCounter.textContent = gameState.dna;
-    infectedCounter.textContent = formatNumber(gameState.totalInfected);
-    deadCounter.textContent = formatNumber(gameState.totalDead);
-    healthyCounter.textContent = formatNumber(totalHealthy);
+// Update news feed
+function updateNewsFeed() {
+    const feed = document.getElementById('newsFeed');
+    if (feed) {
+        feed.innerHTML = gameState.news.map(news => 
+            `<div class="news-item">${news}</div>`
+        ).join('');
+    }
+}
+
+// Format date
+function formatDate() {
+    const date = new Date(2026, 1, 19);
+    date.setDate(date.getDate() + gameState.gameTime);
+    return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
 }
 
 // Format large numbers
@@ -277,71 +391,13 @@ function formatNumber(num) {
     return num.toString();
 }
 
-// Add message to game log
-function addLogMessage(message) {
-    gameState.gameLog.unshift(message);
-    if (gameState.gameLog.length > 10) {
-        gameState.gameLog.pop();
-    }
+// Initialize when page loads
+window.onload = function() {
+    initGame();
     
-    logMessages.innerHTML = gameState.gameLog.map(msg => 
-        `<div class="log-message">${msg}</div>`
-    ).join('');
-}
-
-// Check game conditions
-function checkGameConditions() {
-    // Win condition - infect everyone
-    if (gameState.totalInfected + gameState.totalDead >= gameState.totalPopulation) {
-        gameState.winCondition = true;
-        addLogMessage('🏆 ПОБЕДА! Всё человечество заражено или уничтожено!');
-    }
+    // Set current date
+    document.getElementById('gameDate').textContent = formatDate();
     
-    // Lose condition - no infected and can't spread
-    if (gameState.totalInfected === 0 && gameState.gameTime > 10) {
-        gameState.gameOver = true;
-        addLogMessage('💔 ПОРАЖЕНИЕ! Инфекция полностью исчезла!');
-    }
-}
-
-// Reset game
-function resetGame() {
-    // Reset game state
-    gameState.dna = 100;
-    gameState.totalInfected = 1000;
-    gameState.totalDead = 0;
-    gameState.gameTime = 0;
-    gameState.gameOver = false;
-    gameState.winCondition = false;
-    
-    // Reset countries
-    gameState.countries = {
-        china: { population: 1400000000, infected: 1000, dead: 0, name: 'Китай' },
-        india: { population: 1300000000, infected: 0, dead: 0, name: 'Индия' },
-        usa: { population: 331000000, infected: 0, dead: 0, name: 'США' },
-        europe: { population: 747000000, infected: 0, dead: 0, name: 'Европа' },
-        africa: { population: 1200000000, infected: 0, dead: 0, name: 'Африка' }
-    };
-    
-    // Reset upgrades
-    for (let category in gameState.upgrades) {
-        gameState.upgrades[category].forEach(upgrade => {
-            upgrade.purchased = false;
-        });
-    }
-    
-    // Reset log
-    gameState.gameLog = [];
-    addLogMessage('🔄 Новая игра началась!');
-    
-    // Update UI
-    updateStats();
-    updateCountryDisplays();
-    renderUpgrades();
-}
-
-// Event listeners
-document.getElementById('reset-btn').addEventListener('click', resetGame);
-
-// Start the game
-initGame();
+    // Select default country
+    selectCountry('china');
+};
