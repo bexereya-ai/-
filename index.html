@@ -2,118 +2,362 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bacterial Evolution - Plague Inc Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Plague Inc. - Bacterial Evolution</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <h1>🧫 Bacterial Evolution</h1>
-            <div class="stats">
-                <div class="stat">
-                    <span>🧬 ДНК:</span>
-                    <span id="dna-counter">100</span>
+    <div class="game-wrapper landscape">
+        <!-- Главное меню -->
+        <div class="menu-screen" id="mainMenu">
+            <div class="menu-header">
+                <h1>COVID-19</h1>
+                <div class="menu-buttons">
+                    <button class="menu-btn play-btn" onclick="showScreen('gameScreen')">▶ Играть</button>
+                    <button class="menu-btn" onclick="showScreen('howToPlay')">Как играть</button>
+                    <button class="menu-btn" onclick="showScreen('walkthrough')">Прохождение</button>
                 </div>
-                <div class="stat">
-                    <span>💀 Заражено:</span>
-                    <span id="infected-counter">0</span>
-                </div>
-                <div class="stat">
-                    <span>⚰️ Умерло:</span>
-                    <span id="dead-counter">0</span>
-                </div>
-                <div class="stat">
-                    <span>🌍 Здоровых:</span>
-                    <span id="healthy-counter">7800000000</span>
+                <div class="premium-box">
+                    <h3>Улучшите игру до премиум-версии!</h3>
+                    <p>✔ никакой рекламы</p>
+                    <p>✔ Ускорить игру</p>
+                    <p>✔ Модификация генного кода</p>
                 </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <div class="evolution-tree">
-                <h2>🔬 Эволюция бактерии</h2>
-                <div class="tree-controls">
-                    <button id="reset-btn" class="reset-btn">🔄 Новая игра</button>
+        <!-- Экран выбора типа болезни -->
+        <div class="menu-screen hidden" id="diseaseSelect">
+            <div class="menu-header">
+                <h2>Выберите тип болезни</h2>
+                <button class="back-btn" onclick="showScreen('mainMenu')">← Назад</button>
+            </div>
+            <div class="disease-grid">
+                <div class="disease-card" onclick="selectDisease('bacteria')">
+                    <div class="disease-icon">🦠</div>
+                    <h3>Бактерия</h3>
+                    <p>Наиболее распространенный тип болезни. Неограниченный потенциал.</p>
                 </div>
-                <div class="tree-categories">
-                    <div class="category">
-                        <h3>🦠 Передача</h3>
-                        <div class="upgrades" id="transmission-upgrades"></div>
+                <div class="disease-card" onclick="selectDisease('virus')">
+                    <div class="disease-icon">🦠</div>
+                    <h3>Вирус</h3>
+                    <p>Быстро мутирующая болезнь, которую чрезвычайно трудно контролировать.</p>
+                </div>
+                <div class="disease-card" onclick="selectDisease('fungus')">
+                    <div class="disease-icon">🍄</div>
+                    <h3>Грибок</h3>
+                    <p>Спорам грибка трудно самим переноситься на дальние расстояния.</p>
+                </div>
+                <div class="disease-card" onclick="selectDisease('parasite')">
+                    <div class="disease-icon">🪱</div>
+                    <h3>Паразит</h3>
+                    <p>Паразитическая форма жизни предотвращает изменение ДНК.</p>
+                </div>
+                <div class="disease-card" onclick="selectDisease('prion')">
+                    <div class="disease-icon">🧠</div>
+                    <h3>Прион</h3>
+                    <p>Очень сложный, но медленно развивающийся патоген.</p>
+                </div>
+                <div class="disease-card" onclick="selectDisease('nano')">
+                    <div class="disease-icon">🤖</div>
+                    <h3>Нано-вирус</h3>
+                    <p>Микро-машины со встроенными аварийными выключателями.</p>
+                </div>
+                <div class="disease-card" onclick="selectDisease('bio')">
+                    <div class="disease-icon">💣</div>
+                    <h3>Био-оружие</h3>
+                    <p>Смертоносный патоген, убивающий всё на своём пути.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран выбора сложности -->
+        <div class="menu-screen hidden" id="difficultySelect">
+            <div class="menu-header">
+                <h2>Выберите трудности</h2>
+                <button class="back-btn" onclick="showScreen('diseaseSelect')">← Назад</button>
+            </div>
+            <div class="difficulty-grid">
+                <div class="difficulty-card easy" onclick="selectDifficulty('easy')">
+                    <h3>Простой</h3>
+                    <p class="subtitle">Для новичков или для быстрой игры</p>
+                    <div class="features">
+                        <p>✔ Никто не моет руки</p>
+                        <p>✔ Врачи не работают</p>
+                        <p>✔ С больными обнимаются</p>
                     </div>
-                    <div class="category">
-                        <h3>🧪 Симптомы</h3>
-                        <div class="upgrades" id="symptoms-upgrades"></div>
+                </div>
+                <div class="difficulty-card medium" onclick="selectDifficulty('medium')">
+                    <h3>Средний</h3>
+                    <p class="subtitle">Для опытных стратегов</p>
+                    <div class="features">
+                        <p>⚠ 67,3% людей моют руки</p>
+                        <p>⚠ Врачи работают 3 дня в нед.</p>
+                        <p>⚠ Больных игнорируют</p>
                     </div>
-                    <div class="category">
-                        <h3>💪 Способности</h3>
-                        <div class="upgrades" id="abilities-upgrades"></div>
+                </div>
+                <div class="difficulty-card hard" onclick="selectDifficulty('hard')">
+                    <h3>Сложный</h3>
+                    <p class="subtitle">Для гениев в бетонных бункерах</p>
+                    <div class="features">
+                        <p>✖ Все моют руки</p>
+                        <p>✖ Врачи работают ежедневно</p>
+                        <p>✖ Больных изолируют в тюрьме</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="world-map">
-                <h2>🌍 Распространение</h2>
-                <div class="countries">
-                    <div class="country" id="china">
-                        <span class="country-name">Китай</span>
-                        <div class="country-stats">
-                            <span class="infected" id="china-infected">0</span>
-                            <span class="population" id="china-population">1.4B</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" id="china-progress" style="width: 0%"></div>
-                        </div>
+        <!-- Экран названия болезни -->
+        <div class="menu-screen hidden" id="nameDisease">
+            <div class="menu-header">
+                <h2>1</h2>
+                <button class="back-btn" onclick="showScreen('difficultySelect')">← Назад</button>
+            </div>
+            <div class="name-disease-container">
+                <h3>Назовите болезнь</h3>
+                <input type="text" id="diseaseName" placeholder="Название болезни" value="ВЛВШ">
+                <button class="start-game-btn" onclick="startGame()">Начать эпидемию</button>
+            </div>
+        </div>
+
+        <!-- Основной игровой экран -->
+        <div class="game-screen hidden" id="gameScreen">
+            <!-- Верхняя панель с новостями и датой -->
+            <div class="top-bar">
+                <div class="news-ticker">
+                    <span class="news-label">News</span>
+                    <span class="date" id="gameDate">19 02 2026</span>
+                </div>
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Зараженные</span>
+                        <span class="stat-value" id="infectedTotal">0</span>
                     </div>
-                    <div class="country" id="india">
-                        <span class="country-name">Индия</span>
-                        <div class="country-stats">
-                            <span class="infected" id="india-infected">0</span>
-                            <span class="population" id="india-population">1.3B</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" id="india-progress" style="width: 0%"></div>
-                        </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Мир</span>
+                        <span class="stat-value" id="worldPopulation">8.05B</span>
                     </div>
-                    <div class="country" id="usa">
-                        <span class="country-name">США</span>
-                        <div class="country-stats">
-                            <span class="infected" id="usa-infected">0</span>
-                            <span class="population" id="usa-population">331M</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" id="usa-progress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="country" id="europe">
-                        <span class="country-name">Европа</span>
-                        <div class="country-stats">
-                            <span class="infected" id="europe-infected">0</span>
-                            <span class="population" id="europe-population">747M</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" id="europe-progress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="country" id="africa">
-                        <span class="country-name">Африка</span>
-                        <div class="country-stats">
-                            <span class="infected" id="africa-infected">0</span>
-                            <span class="population" id="africa-population">1.2B</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" id="africa-progress" style="width: 0%"></div>
-                        </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Умерло</span>
+                        <span class="stat-value" id="deadTotal">0</span>
                     </div>
                 </div>
-                
-                <div class="game-log">
-                    <h3>📋 Лог событий</h3>
-                    <div id="log-messages"></div>
+                <div class="dna-counter">
+                    <span class="dna-icon">🧬</span>
+                    <span class="dna-value" id="dnaAmount">0</span>
+                </div>
+            </div>
+
+            <!-- Основная игровая область -->
+            <div class="game-main">
+                <!-- Левая панель - карта мира -->
+                <div class="world-panel">
+                    <div class="world-map-container">
+                        <svg class="world-map" viewBox="0 0 1000 500">
+                            <!-- Китай -->
+                            <path class="country" id="country-china" d="M650,180 L720,170 L740,200 L720,230 L680,240 L640,220 L630,200 Z" onclick="selectCountry('china')"/>
+                            <!-- Индия -->
+                            <path class="country" id="country-india" d="M620,200 L660,200 L670,230 L640,250 L610,240 L600,220 Z" onclick="selectCountry('india')"/>
+                            <!-- США -->
+                            <path class="country" id="country-usa" d="M150,150 L250,140 L270,180 L230,210 L170,200 L140,180 Z" onclick="selectCountry('usa')"/>
+                            <!-- Россия -->
+                            <path class="country" id="country-russia" d="M400,80 L600,70 L650,120 L620,170 L500,180 L400,160 L350,120 Z" onclick="selectCountry('russia')"/>
+                            <!-- Бразилия -->
+                            <path class="country" id="country-brazil" d="M300,320 L370,310 L390,350 L350,380 L290,370 L270,340 Z" onclick="selectCountry('brazil')"/>
+                            <!-- Австралия -->
+                            <path class="country" id="country-australia" d="M800,380 L880,370 L900,410 L850,440 L790,420 L780,390 Z" onclick="selectCountry('australia')"/>
+                            <!-- Япония -->
+                            <path class="country" id="country-japan" d="M760,150 L790,140 L800,170 L780,190 L750,180 Z" onclick="selectCountry('japan')"/>
+                            <!-- Великобритания -->
+                            <path class="country" id="country-uk" d="M340,120 L370,115 L380,140 L360,155 L330,145 Z" onclick="selectCountry('uk')"/>
+                            <!-- Египет -->
+                            <path class="country" id="country-egypt" d="M500,200 L540,190 L550,220 L520,240 L480,230 L470,210 Z" onclick="selectCountry('egypt')"/>
+                            <!-- ЮАР -->
+                            <path class="country" id="country-sa" d="M520,360 L560,350 L580,380 L550,400 L510,390 L490,370 Z" onclick="selectCountry('sa')"/>
+                        </svg>
+                        
+                        <!-- Информация о выбранной стране -->
+                        <div class="country-info" id="countryInfo">
+                            <h3 id="selectedCountryName">Китай</h3>
+                            <div class="country-stats">
+                                <div>Население: <span id="countryPopulation">1.4B</span></div>
+                                <div>Заражено: <span id="countryInfected">0</span></div>
+                                <div>Умерло: <span id="countryDead">0</span></div>
+                            </div>
+                            <div class="infection-bar">
+                                <div class="infection-progress" id="countryInfectionProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Нижняя панель с кнопками навигации -->
+                    <div class="world-nav">
+                        <button class="nav-btn active" onclick="showGameTab('world')">Мир</button>
+                        <button class="nav-btn" onclick="showGameTab('disease')">Болезнь</button>
+                        <button class="nav-btn" onclick="showGameTab('news')">News</button>
+                        <button class="nav-btn" onclick="showGameTab('cure')">Лекарство</button>
+                    </div>
+                </div>
+
+                <!-- Правая панель - информация о болезни -->
+                <div class="disease-panel">
+                    <!-- Вкладка Мир (по умолчанию) -->
+                    <div class="panel-tab active" id="tab-world">
+                        <h2>Мир</h2>
+                        <div class="world-stats-big">
+                            <div class="world-stat">
+                                <span class="world-stat-label">Здоровых</span>
+                                <span class="world-stat-value" id="healthyWorld">8.05B</span>
+                            </div>
+                            <div class="world-stat">
+                                <span class="world-stat-label">Заражено</span>
+                                <span class="world-stat-value" id="infectedWorld">0</span>
+                            </div>
+                            <div class="world-stat">
+                                <span class="world-stat-label">Умерло</span>
+                                <span class="world-stat-value" id="deadWorld">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="cure-progress">
+                            <h3>Лекарство</h3>
+                            <div class="progress-bar large">
+                                <div class="progress-fill" id="cureProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="cure-status" id="cureStatus">ВЛВШ не замечена</div>
+                            <div class="cure-time" id="cureTime">Лекарство появится через: 10 лет</div>
+                        </div>
+                        
+                        <button class="data-btn">Данные</button>
+                    </div>
+
+                    <!-- Вкладка Болезнь -->
+                    <div class="panel-tab hidden" id="tab-disease">
+                        <h2>Болезнь: <span id="diseaseNameDisplay">ВЛВШ</span></h2>
+                        
+                        <div class="disease-info">
+                            <div class="info-row">
+                                <span>Место появления:</span>
+                                <span id="originCountry">Китай</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Дата появления:</span>
+                                <span id="startDate">19 февраля 2026</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Сегодня заражено:</span>
+                                <span id="todayInfected">0</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Сегодня умерло:</span>
+                                <span id="todayDead">0</span>
+                            </div>
+                        </div>
+
+                        <div class="dna-upgrades">
+                            <h3>Умения</h3>
+                            <div class="stat-bars">
+                                <div class="stat-bar">
+                                    <span>Заразность</span>
+                                    <div class="bar-container">
+                                        <div class="bar-fill" id="infectivityBar" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar">
+                                    <span>Тяжесть</span>
+                                    <div class="bar-container">
+                                        <div class="bar-fill" id="severityBar" style="width: 10%"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-bar">
+                                    <span>Летальность</span>
+                                    <div class="bar-container">
+                                        <div class="bar-fill" id="lethalityBar" style="width: 5%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Древо эволюции -->
+                        <div class="evolution-tree">
+                            <h3>Эволюция</h3>
+                            <div class="tree-tabs">
+                                <button class="tree-tab active" onclick="showTreeTab('transmission')">Передача</button>
+                                <button class="tree-tab" onclick="showTreeTab('symptoms')">Симптомы</button>
+                                <button class="tree-tab" onclick="showTreeTab('abilities')">Способности</button>
+                            </div>
+                            
+                            <div class="tree-content" id="tree-transmission">
+                                <div class="upgrade-item" onclick="purchaseUpgrade('air')">
+                                    <span class="upgrade-name">Воздушно-капельный</span>
+                                    <span class="upgrade-cost">🧬 25</span>
+                                </div>
+                                <div class="upgrade-item" onclick="purchaseUpgrade('water')">
+                                    <span class="upgrade-name">Водный путь</span>
+                                    <span class="upgrade-cost">🧬 30</span>
+                                </div>
+                                <div class="upgrade-item" onclick="purchaseUpgrade('blood')">
+                                    <span class="upgrade-name">Кровяной путь</span>
+                                    <span class="upgrade-cost">🧬 50</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tree-content hidden" id="tree-symptoms">
+                                <div class="upgrade-item" onclick="purchaseUpgrade('cough')">
+                                    <span class="upgrade-name">Кашель</span>
+                                    <span class="upgrade-cost">🧬 20</span>
+                                </div>
+                                <div class="upgrade-item" onclick="purchaseUpgrade('fever')">
+                                    <span class="upgrade-name">Лихорадка</span>
+                                    <span class="upgrade-cost">🧬 30</span>
+                                </div>
+                                <div class="upgrade-item" onclick="purchaseUpgrade('necrosis')">
+                                    <span class="upgrade-name">Некроз</span>
+                                    <span class="upgrade-cost">🧬 60</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tree-content hidden" id="tree-abilities">
+                                <div class="upgrade-item" onclick="purchaseUpgrade('resistHeat')">
+                                    <span class="upgrade-name">Термоустойчивость</span>
+                                    <span class="upgrade-cost">🧬 35</span>
+                                </div>
+                                <div class="upgrade-item" onclick="purchaseUpgrade('resistCold')">
+                                    <span class="upgrade-name">Хладоустойчивость</span>
+                                    <span class="upgrade-cost">🧬 35</span>
+                                </div>
+                                <div class="upgrade-item" onclick="purchaseUpgrade('drugResist')">
+                                    <span class="upgrade-name">Лекарств. устойчивость</span>
+                                    <span class="upgrade-cost">🧬 70</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Вкладка News -->
+                    <div class="panel-tab hidden" id="tab-news">
+                        <h2>News</h2>
+                        <div class="news-feed" id="newsFeed">
+                            <div class="news-item">19.02.2026 - Первые случаи заражения в Китае</div>
+                        </div>
+                    </div>
+
+                    <!-- Вкладка Лекарство -->
+                    <div class="panel-tab hidden" id="tab-cure">
+                        <h2>Лекарство</h2>
+                        <div class="cure-detail">
+                            <div class="cure-percent" id="curePercent">0%</div>
+                            <div class="progress-bar huge">
+                                <div class="progress-fill" id="cureProgressDetail" style="width: 0%"></div>
+                            </div>
+                            <div class="cure-estimate" id="cureEstimate">~10 лет до завершения</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <script src="game.js"></script>
 </body>
-  </html>
+                    </html>
