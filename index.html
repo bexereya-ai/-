@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacterial Evolution - Plague Inc Style</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🧫 Bacterial Evolution</h1>
+            <div class="stats">
+                <div class="stat">
+                    <span>🧬 ДНК:</span>
+                    <span id="dna-counter">100</span>
+                </div>
+                <div class="stat">
+                    <span>💀 Заражено:</span>
+                    <span id="infected-counter">0</span>
+                </div>
+                <div class="stat">
+                    <span>⚰️ Умерло:</span>
+                    <span id="dead-counter">0</span>
+                </div>
+                <div class="stat">
+                    <span>🌍 Здоровых:</span>
+                    <span id="healthy-counter">7800000000</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="evolution-tree">
+                <h2>🔬 Эволюция бактерии</h2>
+                <div class="tree-controls">
+                    <button id="reset-btn" class="reset-btn">🔄 Новая игра</button>
+                </div>
+                <div class="tree-categories">
+                    <div class="category">
+                        <h3>🦠 Передача</h3>
+                        <div class="upgrades" id="transmission-upgrades"></div>
+                    </div>
+                    <div class="category">
+                        <h3>🧪 Симптомы</h3>
+                        <div class="upgrades" id="symptoms-upgrades"></div>
+                    </div>
+                    <div class="category">
+                        <h3>💪 Способности</h3>
+                        <div class="upgrades" id="abilities-upgrades"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="world-map">
+                <h2>🌍 Распространение</h2>
+                <div class="countries">
+                    <div class="country" id="china">
+                        <span class="country-name">Китай</span>
+                        <div class="country-stats">
+                            <span class="infected" id="china-infected">0</span>
+                            <span class="population" id="china-population">1.4B</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="china-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="country" id="india">
+                        <span class="country-name">Индия</span>
+                        <div class="country-stats">
+                            <span class="infected" id="india-infected">0</span>
+                            <span class="population" id="india-population">1.3B</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="india-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="country" id="usa">
+                        <span class="country-name">США</span>
+                        <div class="country-stats">
+                            <span class="infected" id="usa-infected">0</span>
+                            <span class="population" id="usa-population">331M</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="usa-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="country" id="europe">
+                        <span class="country-name">Европа</span>
+                        <div class="country-stats">
+                            <span class="infected" id="europe-infected">0</span>
+                            <span class="population" id="europe-population">747M</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="europe-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="country" id="africa">
+                        <span class="country-name">Африка</span>
+                        <div class="country-stats">
+                            <span class="infected" id="africa-infected">0</span>
+                            <span class="population" id="africa-population">1.2B</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="africa-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-log">
+                    <h3>📋 Лог событий</h3>
+                    <div id="log-messages"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+  </html>
