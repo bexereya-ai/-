@@ -9,11 +9,13 @@
 body {
     background: #1a1a2e;
     overflow: hidden;
+    width: 100vw;
+    height: 100vh;
 }
 
 .game-wrapper {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     position: relative;
     background: linear-gradient(135deg, #16213e, #0f3460);
 }
@@ -24,20 +26,34 @@ body {
     flex-direction: column;
 }
 
+/* Hidden class - important for toggling screens */
+.hidden {
+    display: none !important;
+}
+
+/* Make sure screens are visible when not hidden */
+.menu-screen:not(.hidden) {
+    display: flex !important;
+}
+
+.game-screen:not(.hidden) {
+    display: flex !important;
+}
+
 /* Menu Screens */
 .menu-screen {
     width: 100%;
     height: 100%;
-    display: flex;
+    display: none; /* Hidden by default */
     flex-direction: column;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     color: white;
     padding: 20px;
     overflow-y: auto;
-}
-
-.menu-screen.hidden {
-    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
 }
 
 .menu-header {
@@ -45,12 +61,19 @@ body {
     margin: 0 auto;
     width: 100%;
     text-align: center;
+    padding: 20px;
 }
 
 .menu-header h1 {
     font-size: 4em;
     color: #ff6b6b;
     text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+    margin-bottom: 30px;
+}
+
+.menu-header h2 {
+    font-size: 2.5em;
+    color: #4ecdc4;
     margin-bottom: 30px;
 }
 
@@ -70,6 +93,7 @@ body {
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
+    border: 2px solid transparent;
 }
 
 .menu-btn.play-btn {
@@ -81,6 +105,11 @@ body {
 .menu-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+    border-color: white;
+}
+
+.menu-btn.play-btn:hover {
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.7);
 }
 
 .premium-box {
@@ -89,10 +118,12 @@ body {
     padding: 20px;
     border-radius: 15px;
     text-align: left;
+    border: 2px solid #ff6b6b;
 }
 
 .premium-box h3 {
     margin-bottom: 10px;
+    font-size: 1.5em;
 }
 
 .premium-box p {
@@ -103,7 +134,7 @@ body {
 /* Disease Selection */
 .disease-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     max-width: 1200px;
     margin: 30px auto;
@@ -117,11 +148,18 @@ body {
     padding: 20px;
     cursor: pointer;
     transition: all 0.3s;
+    backdrop-filter: blur(5px);
 }
 
 .disease-card:hover {
     background: rgba(78, 205, 196, 0.2);
     transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+    border-color: #ff6b6b;
+}
+
+.disease-card:active {
+    transform: translateY(-2px);
 }
 
 .disease-icon {
@@ -132,11 +170,13 @@ body {
 .disease-card h3 {
     margin-bottom: 10px;
     color: #4ecdc4;
+    font-size: 1.5em;
 }
 
 .disease-card p {
     font-size: 0.9em;
-    color: #aaa;
+    color: #ddd;
+    line-height: 1.4;
 }
 
 /* Difficulty Selection */
@@ -154,6 +194,18 @@ body {
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s;
+    color: white;
+    border: 2px solid transparent;
+}
+
+.difficulty-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: white;
+}
+
+.difficulty-card:active {
+    transform: translateY(-5px) scale(1);
 }
 
 .difficulty-card.easy {
@@ -193,23 +245,34 @@ body {
     max-width: 500px;
     margin: 50px auto;
     text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid #4ecdc4;
 }
 
 .name-disease-container h3 {
     font-size: 2em;
     margin-bottom: 30px;
+    color: #4ecdc4;
 }
 
 .name-disease-container input {
     width: 100%;
     padding: 15px;
     font-size: 1.5em;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border: 2px solid #4ecdc4;
     color: white;
     border-radius: 10px;
     margin-bottom: 30px;
     text-align: center;
+    outline: none;
+}
+
+.name-disease-container input:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
 }
 
 .start-game-btn {
@@ -221,25 +284,31 @@ body {
     border-radius: 15px;
     cursor: pointer;
     transition: all 0.3s;
+    border: 2px solid transparent;
 }
 
 .start-game-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+    border-color: white;
+}
+
+.start-game-btn:active {
+    transform: scale(0.98);
 }
 
 /* Game Screen */
 .game-screen {
     width: 100%;
     height: 100%;
-    display: flex;
+    display: none; /* Hidden by default */
     flex-direction: column;
     background: #0a0f1f;
     color: white;
-}
-
-.game-screen.hidden {
-    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
 }
 
 /* Top Bar */
@@ -250,6 +319,7 @@ body {
     padding: 10px 20px;
     border-bottom: 2px solid #4ecdc4;
     align-items: center;
+    z-index: 25;
 }
 
 .news-ticker {
@@ -261,6 +331,15 @@ body {
 .news-label {
     font-weight: bold;
     text-transform: uppercase;
+    background: #ff6b6b;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.date {
+    color: #4ecdc4;
+    font-weight: bold;
 }
 
 .game-stats {
@@ -277,6 +356,7 @@ body {
     display: block;
     font-size: 0.8em;
     color: #aaa;
+    text-transform: uppercase;
 }
 
 .stat-value {
@@ -288,10 +368,12 @@ body {
 .dna-counter {
     text-align: right;
     font-size: 1.3em;
+    font-weight: bold;
 }
 
 .dna-icon {
     margin-right: 5px;
+    font-size: 1.2em;
 }
 
 /* Game Main Area */
@@ -300,6 +382,7 @@ body {
     grid-template-columns: 1.5fr 1fr;
     flex: 1;
     overflow: hidden;
+    height: calc(100vh - 60px);
 }
 
 /* World Panel */
@@ -308,12 +391,15 @@ body {
     flex-direction: column;
     border-right: 2px solid #4ecdc4;
     height: 100%;
+    background: #0f1a2f;
 }
 
 .world-map-container {
     flex: 1;
     position: relative;
     padding: 20px;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .world-map {
@@ -321,6 +407,7 @@ body {
     height: auto;
     background: #1e2a47;
     border-radius: 10px;
+    display: block;
 }
 
 .country {
@@ -328,14 +415,30 @@ body {
     stroke: #4ecdc4;
     stroke-width: 1;
     cursor: pointer;
-    transition: fill 0.3s;
+    transition: all 0.3s;
 }
 
 .country:hover {
     fill: #3a4a7a;
+    stroke: #ff6b6b;
+    stroke-width: 2;
 }
 
-.country.infected {
+.country.selected {
+    stroke: #ff6b6b !important;
+    stroke-width: 3px !important;
+    filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.5));
+}
+
+.country.infected-light {
+    fill: #ffd1d1;
+}
+
+.country.infected-medium {
+    fill: #ff9f9f;
+}
+
+.country.infected-heavy {
     fill: #ff6b6b;
 }
 
@@ -344,15 +447,18 @@ body {
     bottom: 20px;
     left: 20px;
     right: 20px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.9);
     padding: 15px;
     border-radius: 10px;
-    border: 1px solid #4ecdc4;
+    border: 2px solid #4ecdc4;
+    backdrop-filter: blur(5px);
+    z-index: 30;
 }
 
 .country-info h3 {
     color: #4ecdc4;
     margin-bottom: 10px;
+    font-size: 1.3em;
 }
 
 .country-stats {
@@ -363,17 +469,29 @@ body {
     font-size: 0.9em;
 }
 
+.country-stats div {
+    color: #ddd;
+}
+
+.country-stats span {
+    display: block;
+    font-weight: bold;
+    color: #4ecdc4;
+    margin-top: 3px;
+}
+
 .infection-bar {
     width: 100%;
     height: 10px;
     background: #2a3a5a;
     border-radius: 5px;
     overflow: hidden;
+    margin-top: 5px;
 }
 
 .infection-progress {
     height: 100%;
-    background: #ff6b6b;
+    background: linear-gradient(90deg, #ff6b6b, #ff4757);
     transition: width 0.3s;
 }
 
@@ -392,34 +510,47 @@ body {
     cursor: pointer;
     font-size: 1.1em;
     transition: all 0.3s;
+    border-bottom: 3px solid transparent;
 }
 
 .nav-btn:hover {
     background: #1e2a47;
+    border-bottom-color: #4ecdc4;
 }
 
 .nav-btn.active {
     background: #4ecdc4;
     color: #16213e;
+    font-weight: bold;
+    border-bottom-color: #ff6b6b;
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
 }
 
 /* Disease Panel */
 .disease-panel {
     padding: 20px;
     overflow-y: auto;
+    background: #0a0f1f;
+    height: 100%;
 }
 
 .panel-tab {
-    display: block;
+    display: none;
 }
 
-.panel-tab.hidden {
-    display: none;
+.panel-tab.active {
+    display: block;
 }
 
 .panel-tab h2 {
     color: #4ecdc4;
     margin-bottom: 20px;
+    font-size: 1.8em;
+    border-bottom: 2px solid #4ecdc4;
+    padding-bottom: 10px;
 }
 
 .world-stats-big {
@@ -429,8 +560,9 @@ body {
 .world-stat {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    padding: 12px;
     border-bottom: 1px solid #2a3a5a;
+    font-size: 1.1em;
 }
 
 .world-stat-label {
@@ -447,10 +579,12 @@ body {
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
+    border: 1px solid #4ecdc4;
 }
 
 .cure-progress h3 {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    color: #ff6b6b;
 }
 
 .progress-bar {
@@ -478,6 +612,7 @@ body {
 
 .cure-status {
     margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .cure-time {
@@ -495,10 +630,19 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s;
+    font-weight: bold;
+    border: 2px solid transparent;
 }
 
 .data-btn:hover {
     background: #45b7aa;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+    border-color: white;
+}
+
+.data-btn:active {
+    transform: translateY(0);
 }
 
 /* Disease Info */
@@ -507,12 +651,13 @@ body {
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
+    border: 1px solid #4ecdc4;
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 10px 0;
     border-bottom: 1px solid #2a3a5a;
 }
 
@@ -520,20 +665,31 @@ body {
     border-bottom: none;
 }
 
+.info-row span:first-child {
+    color: #aaa;
+}
+
+.info-row span:last-child {
+    font-weight: bold;
+    color: #4ecdc4;
+}
+
 /* Stat Bars */
 .stat-bars {
     background: #16213e;
     padding: 20px;
     border-radius: 10px;
+    border: 1px solid #4ecdc4;
 }
 
 .stat-bar {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .stat-bar span {
     display: block;
     margin-bottom: 5px;
+    color: #ddd;
 }
 
 .bar-container {
@@ -546,7 +702,7 @@ body {
 
 .bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+    background: linear-gradient(90deg, #ff6b6b, #ff4757);
     transition: width 0.3s;
 }
 
@@ -556,6 +712,12 @@ body {
     padding: 20px;
     border-radius: 10px;
     margin-top: 20px;
+    border: 1px solid #4ecdc4;
+}
+
+.evolution-tree h3 {
+    color: #ff6b6b;
+    margin-bottom: 15px;
 }
 
 .tree-tabs {
@@ -573,18 +735,30 @@ body {
     cursor: pointer;
     border-radius: 5px;
     transition: all 0.3s;
+    font-size: 0.9em;
+}
+
+.tree-tab:hover {
+    background: #3a4a7a;
+    transform: translateY(-2px);
 }
 
 .tree-tab.active {
     background: #4ecdc4;
     color: #16213e;
+    font-weight: bold;
+}
+
+.tree-tab:active {
+    transform: scale(0.95);
 }
 
 .tree-content {
     display: grid;
     gap: 10px;
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
+    padding-right: 5px;
 }
 
 .tree-content.hidden {
@@ -593,27 +767,49 @@ body {
 
 .upgrade-item {
     background: #2a3a5a;
-    padding: 10px;
+    padding: 12px;
     border-radius: 5px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.3s;
+    transition: all 0.2s;
+    border: 1px solid transparent;
 }
 
 .upgrade-item:hover {
     background: #3a4a7a;
     transform: translateX(5px);
+    border-color: #4ecdc4;
+}
+
+.upgrade-item:active {
+    transform: scale(0.98) translateX(5px);
+}
+
+.upgrade-item.purchased {
+    background: #1e3a2a;
+    border-color: #4CAF50;
+    opacity: 0.8;
+    cursor: default;
+}
+
+.upgrade-item.purchased:hover {
+    transform: none;
+    border-color: #4CAF50;
 }
 
 .upgrade-name {
     font-size: 0.9em;
+    font-weight: bold;
 }
 
 .upgrade-cost {
     color: #4ecdc4;
     font-weight: bold;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3px 8px;
+    border-radius: 12px;
 }
 
 /* News Feed */
@@ -621,14 +817,49 @@ body {
     background: #16213e;
     padding: 20px;
     border-radius: 10px;
-    height: 300px;
+    height: 400px;
     overflow-y: auto;
+    border: 1px solid #4ecdc4;
 }
 
 .news-item {
-    padding: 10px;
+    padding: 12px;
     border-bottom: 1px solid #2a3a5a;
+    color: #ddd;
+    font-size: 0.95em;
+    animation: fadeIn 0.5s;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cure Detail */
+.cure-detail {
+    background: #16213e;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #4ecdc4;
+}
+
+.cure-percent {
+    font-size: 4em;
+    font-weight: bold;
+    color: #4ecdc4;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+}
+
+.cure-estimate {
+    margin-top: 20px;
     color: #aaa;
+    font-size: 1.1em;
 }
 
 /* Back Button */
@@ -641,10 +872,18 @@ body {
     cursor: pointer;
     font-size: 1.1em;
     margin-top: 10px;
+    border: 2px solid transparent;
+    transition: all 0.3s;
 }
 
 .back-btn:hover {
     background: #45b7aa;
+    transform: translateX(-5px);
+    border-color: white;
+}
+
+.back-btn:active {
+    transform: translateX(-2px);
 }
 
 /* Scrollbar */
@@ -666,7 +905,7 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .game-main {
         grid-template-columns: 1fr;
     }
@@ -678,5 +917,150 @@ body {
     
     .difficulty-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
+    
+    .disease-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
+}
+
+@media (max-width: 768px) {
+    .top-bar {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .game-stats {
+        gap: 20px;
+    }
+    
+    .menu-header h1 {
+        font-size: 2.5em;
+    }
+    
+    .disease-card {
+        padding: 15px;
+    }
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* Clickable elements */
+button, .disease-card, .difficulty-card, .country, .upgrade-item, .nav-btn, .tree-tab, .back-btn, .start-game-btn, .menu-btn, .data-btn {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+/* Disabled state */
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Loading animation */
+.loading {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Game over screen */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    display: none;
+}
+
+.game-overlay.show {
+    display: flex;
+}
+
+.overlay-content {
+    background: #16213e;
+    padding: 40px;
+    border-radius: 20px;
+    border: 3px solid #4ecdc4;
+    text-align: center;
+    max-width: 400px;
+}
+
+.overlay-content h2 {
+    color: #ff6b6b;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.overlay-content p {
+    color: #ddd;
+    margin-bottom: 30px;
+    font-size: 1.2em;
+}
+
+.overlay-btn {
+    padding: 15px 30px;
+    background: #4ecdc4;
+    border: none;
+    color: #16213e;
+    font-size: 1.2em;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.overlay-btn:hover {
+    background: #45b7aa;
+    transform: scale(1.05);
+}
+
+/* Tooltip */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background: #16213e;
+    color: white;
+    border-radius: 5px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    border: 1px solid #4ecdc4;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+[data-tooltip]:hover:before {
+    opacity: 1;
+}
