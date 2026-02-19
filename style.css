@@ -1,0 +1,294 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.game-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 30px;
+    border-bottom: 4px solid #5a67d8;
+}
+
+.header h1 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.stat {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.2em;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+}
+
+.stat:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.evolution-tree {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.evolution-tree h2 {
+    color: #4a5568;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.tree-controls {
+    margin-bottom: 20px;
+}
+
+.reset-btn {
+    background: #f56565;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.reset-btn:hover {
+    background: #c53030;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 101, 101, 0.4);
+}
+
+.tree-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.category h3 {
+    color: #2d3748;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.upgrades {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.upgrade-item {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upgrade-item:hover:not(.locked) {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.upgrade-item.purchased {
+    background: #c6f6d5;
+    border-color: #48bb78;
+    cursor: default;
+    opacity: 0.8;
+}
+
+.upgrade-item.locked {
+    background: #edf2f7;
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(50%);
+}
+
+.upgrade-item.locked:hover {
+    transform: none;
+    border-color: #e2e8f0;
+}
+
+.upgrade-name {
+    font-weight: bold;
+    color: #2d3748;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.upgrade-desc {
+    font-size: 0.85em;
+    color: #718096;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.upgrade-cost {
+    font-size: 0.9em;
+    color: #48bb78;
+    font-weight: bold;
+    display: block;
+}
+
+.upgrade-effect {
+    font-size: 0.85em;
+    color: #667eea;
+    display: block;
+    margin-top: 5px;
+}
+
+.world-map {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.world-map h2 {
+    color: #4a5568;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.countries {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.country {
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.country:hover {
+    border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.country-name {
+    font-weight: bold;
+    color: #2d3748;
+    font-size: 1.1em;
+}
+
+.country-stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    color: #718096;
+}
+
+.country-stats .infected {
+    color: #f56565;
+    font-weight: bold;
+}
+
+.country-stats .population {
+    color: #48bb78;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #f56565, #ed64a6);
+    transition: width 0.3s ease;
+}
+
+.game-log {
+    margin-top: 20px;
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.game-log h3 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+#log-messages {
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.9em;
+    color: #4a5568;
+}
+
+.log-message {
+    padding: 5px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .upgrades {
+        grid-template-columns: 1fr;
+    }
+}
